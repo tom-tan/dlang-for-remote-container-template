@@ -1,0 +1,10 @@
+{
+  "dockerFile": "Dockerfile",
+  "extensions": ["webfreak.code-d", "ms-vsliveshare.vsliveshare"],
+  "settings": {
+    "d.dmdPath": "ldmd2",
+    "d.stdlibPath": [
+      "/dlang/dc/import"
+    ]
+  }
+}
