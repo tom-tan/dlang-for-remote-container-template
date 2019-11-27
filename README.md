@@ -10,7 +10,7 @@ This is a template to develop D applications with VSCode with remote container e
 
 ## What is provided by this template?
 - A container setting for VSCode. It provides the followings:
-  - `ldc2` (for linux with glibc and linux with muslc)
+  - `ldc2`
   - some utilities such as `dub`, `rdmd`
   - some development tools such as `code-d` and `dcd` will be automatically installed to the container when you open a D file
 
