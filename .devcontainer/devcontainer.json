@@ -1,6 +1,6 @@
 {
-  "dockerFile": "Dockerfile",
-  "extensions": ["webfreak.code-d", "ms-vsliveshare.vsliveshare"],
+  "image": "dlang2/ldc-ubuntu:1.18.0",
+  "extensions": ["webfreak.code-d"],
   "settings": {
     "d.dmdPath": "ldmd2",
     "d.stdlibPath": [

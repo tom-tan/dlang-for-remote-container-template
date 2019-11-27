@@ -1,4 +1,4 @@
-FROM dlang2/ldc-ubuntu:1.17.0 AS build
+FROM dlang2/ldc-ubuntu:1.18.0 AS build
 
 ARG DEBCONF_NOWARNINGS=yes
 
@@ -7,7 +7,7 @@ RUN apt-get install -y --no-install-recommends cmake musl-tools
 RUN CC=musl-gcc ldc-build-runtime --dFlags="-w;-mtriple=x86_64-alpine-linux-musl" BUILD_SHARED_LIBS=OFF
 
 
-FROM dlang2/ldc-ubuntu:1.17.0
+FROM dlang2/ldc-ubuntu:1.18.0
 
 ARG DEBCONF_NOWARNINGS=yes
 
