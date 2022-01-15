@@ -26,7 +26,7 @@ ONBUILD ARG D_LD_LIBRARY_PATH=${DBASE}/dc/lib
 ONBUILD ARG DMD_PATH=${D_PATH}
 ONBUILD ENV DMD=ldmd2
 ONBUILD ENV DC=ldc2
-ONBUILD ENV EXTRA_PKG=libxml2
+ONBUILD ARG EXTRA_PKG=libxml2
 
 FROM common-env AS gdc-env
 ONBUILD ARG DBASE=${DBASE}
@@ -38,7 +38,7 @@ ONBUILD ARG D_LD_LIBRARY_PATH=${DBASE}/dc/lib64
 ONBUILD ARG DMD_PATH=${DBASE}/dc/bin
 ONBUILD ENV DMD=gdmd
 ONBUILD ENV DC=gdc
-ONBUILD ENV EXTRA_PKG=perl-modules
+ONBUILD ARG EXTRA_PKG=perl-modules
 
 FROM ${DC_NAME}-env
 
@@ -55,14 +55,11 @@ RUN update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.lld" 20 && \
     update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.gold" 10 && \
     update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.bfd" 10
 
-RUN mkdir ${DBASE} && \
-    chown vscode ${DBASE}
-
 RUN set -ex && \
 	curl -fsS https://dlang.org/install.sh | bash -s ${DC_NAME}-${DC_VERSION} -p ${DBASE}
 
-RUN chmod 755 -R ${DBASE}
-RUN ln -s ${DBASE}/${DC_NAME}-${DC_VERSION} ${DBASE}/dc && ls ${DBASE}
+RUN ln -s ${DBASE}/${DC_NAME}-${DC_VERSION} ${DBASE}/dc && \
+    chmod 755 -R ${DBASE} && chown -R vscode:vscode ${DBASE}
 
 # Prevents conflicts with system libs
 RUN if [ "${DC_NAME}" = "gdc" ]; then \
