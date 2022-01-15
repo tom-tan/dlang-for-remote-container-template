@@ -1,6 +1,9 @@
 name: Build containers
 
 on:
+  push:
+    branches:
+      - master
   schedule:
     - cron:  '10 4 * * *'
 
