@@ -87,7 +87,7 @@ jobs:
       - name: Cache latest version info
         run: |
           mkdir -p $GITHUB_WORKSPACE/dc-versions
-          echo $latest > $GITHUB_WORKSPACE/dc-vesions/$dc
+          echo $latest > $GITHUB_WORKSPACE/dc-versions/$dc
         env:
           dc: ${{ matrix.dc }}
           latest: ${{ steps.get_release.outputs.latest }}
