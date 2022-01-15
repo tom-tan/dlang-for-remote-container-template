@@ -40,7 +40,6 @@ ONBUILD ENV DMD=gdmd
 ONBUILD ENV DC=gdc
 ONBUILD ENV EXTRA_PKG=perl-modules
 
-
 FROM ${DC_NAME}-env
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -59,12 +58,8 @@ RUN update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.lld" 20 && \
 RUN mkdir ${DBASE} && \
     chown vscode ${DBASE}
 
-USER vscode
-
 RUN set -ex && \
 	curl -fsS https://dlang.org/install.sh | bash -s ${DC_NAME}-${DC_VERSION} -p ${DBASE}
-
-USER root
 
 RUN chmod 755 -R ${DBASE}
 RUN ln -s ${DBASE}/${DC_NAME}-${DC_VERSION} ${DBASE}/dc && ls ${DBASE}
