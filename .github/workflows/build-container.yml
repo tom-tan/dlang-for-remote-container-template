@@ -23,7 +23,7 @@ jobs:
           fetch-depth: 1
       - uses: actions/cache@v2
         with:
-          path: ~/dc-versions
+          path: ${{ github.workspace }}/dc-versions
           key: ${{ matrix.dc }}
       - id: get_release
         run: |
@@ -43,8 +43,8 @@ jobs:
             latest=""
           fi
 
-          if [ -e ~/dc-versions/$dc ]; then
-            cur="$(cat ~/dc-versions/$dc)"
+          if [ -e $GITHUB_WORKSPACE/dc-versions/$dc ]; then
+            cur="$(cat $GITHUB_WORKSPACE/dc-versions/$dc)"
           else
             cur=""
           fi
@@ -84,10 +84,10 @@ jobs:
             VARIANT=ubuntu-20.04
             DC_NAME=${{ matrix.dc }}
             DC_VERSION=${{ steps.get_release.outputs.latest }}
-      - name: Cachee latest version info
+      - name: Cache latest version info
         run: |
-          mkdir -p ~/dc-versions
-          echo $latest > ~/dc-vesions/$dc
+          mkdir -p $GITHUB_WORKSPACE/dc-versions
+          echo $latest > $GITHUB_WORKSPACE/dc-vesions/$dc
         env:
           dc: ${{ matrix.dc }}
           latest: ${{ steps.get_release.outputs.latest }}
