@@ -1,8 +1,8 @@
-ARG IMAGE_VERSION
+ARG VARIANT
 ARG DC_NAME
 ARG DC_VERSION
 
-FROM ubuntu:${IMAGE_VERSION} AS common-env
+FROM mcr.microsoft.com/vscode/devcontainers/base:ubuntu-${VARIANT} AS common-env
 ONBUILD ARG DBASE=/dlang
 
 FROM common-env AS dmd-env
@@ -26,6 +26,7 @@ ONBUILD ARG D_LD_LIBRARY_PATH=${DBASE}/dc/lib
 ONBUILD ARG DMD_PATH=${D_PATH}
 ONBUILD ENV DMD=ldmd2
 ONBUILD ENV DC=ldc2
+ONBUILD ENV EXTRA_PKG=libxml2
 
 FROM common-env AS gdc-env
 ONBUILD ARG DBASE=${DBASE}
@@ -37,6 +38,7 @@ ONBUILD ARG D_LD_LIBRARY_PATH=${DBASE}/dc/lib64
 ONBUILD ARG DMD_PATH=${DBASE}/dc/bin
 ONBUILD ENV DMD=gdmd
 ONBUILD ENV DC=gdc
+ONBUILD ENV EXTRA_PKG=perl-modules
 
 
 FROM ${DC_NAME}-env
@@ -48,23 +50,16 @@ RUN set -ex && \
     apt-get install -y --no-install-recommends \
         curl ca-certificates gpg xz-utils \
         gcc libc6-dev lld \
-        gdb git sudo \
-        libxml2 perl-modules
+        gdb ${EXTRA_PKG}
 
 RUN update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.lld" 20 && \
     update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.gold" 10 && \
     update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.bfd" 10
 
-RUN groupadd --gid 1000 dlang && \
-    useradd --uid 1000 --gid dlang --shell /bin/bash --create-home dlang
-
-# Add dlang user to sudoers
 RUN mkdir ${DBASE} && \
-    chown dlang ${DBASE} && \
-    echo "%dlang   ALL=(ALL)   NOPASSWD:    ALL" >> /etc/sudoers.d/dlang && \
-    chmod 0440 /etc/sudoers.d/dlang
+    chown vscode ${DBASE}
 
-USER dlang
+USER vscode
 
 RUN set -ex && \
 	curl -fsS https://dlang.org/install.sh | bash -s ${DC_NAME}-${DC_VERSION} -p ${DBASE}
