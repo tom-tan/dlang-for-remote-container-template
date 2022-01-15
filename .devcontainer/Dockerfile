@@ -2,7 +2,7 @@ ARG VARIANT
 ARG DC_NAME
 ARG DC_VERSION
 
-FROM mcr.microsoft.com/vscode/devcontainers/base:ubuntu-${VARIANT} AS common-env
+FROM mcr.microsoft.com/vscode/devcontainers/base:${VARIANT} AS common-env
 ONBUILD ARG DBASE=/dlang
 
 FROM common-env AS dmd-env
@@ -49,17 +49,14 @@ RUN set -ex && \
     apt-get install -y --no-install-recommends \
         curl ca-certificates gpg xz-utils \
         gcc libc6-dev lld \
-        gdb ${EXTRA_PKG}
-
-RUN update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.lld" 20 && \
+        gdb ${EXTRA_PKG} && \
+    update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.lld" 20 && \
     update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.gold" 10 && \
-    update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.bfd" 10
-
-RUN set -ex && \
-	curl -fsS https://dlang.org/install.sh | bash -s ${DC_NAME}-${DC_VERSION} -p ${DBASE}
-
-RUN ln -s ${DBASE}/${DC_NAME}-${DC_VERSION} ${DBASE}/dc && \
-    chmod 755 -R ${DBASE} && chown -R vscode:vscode ${DBASE}
+    update-alternatives --install "/usr/bin/ld" "ld" "/usr/bin/ld.bfd" 10 && \
+	curl -fsS https://dlang.org/install.sh | bash -s ${DC_NAME}-${DC_VERSION} -p ${DBASE} && \
+    ln -s ${DBASE}/${DC_NAME}-${DC_VERSION} ${DBASE}/dc && \
+    chmod 755 -R ${DBASE} && chown -R vscode:vscode ${DBASE} && \
+    apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts
 
 # Prevents conflicts with system libs
 RUN if [ "${DC_NAME}" = "gdc" ]; then \
