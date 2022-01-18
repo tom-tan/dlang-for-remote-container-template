@@ -47,12 +47,15 @@ jobs:
           fi
  
           if [ -z "$latest" -o "$latest" = "$cur" ]; then
-            echo "::set-output name=need_update::false"
-            echo "::set-output name=latest::"
+            need_update=false
+            latest=""
           else
-            echo "::set-output name=need_update::true"
-            echo "::set-output name=latest::$latest"
+            need_update=true
           fi
+          echo "::set-output name=need_update::$need_update"
+          echo "::set-output name=latest::$latest"
+
+          echo "need_update? '$need_update', current: '$cur', latest, '$latest'"
         env:
           dc: ${{ matrix.dc }}
       - name: Set up QEMU
