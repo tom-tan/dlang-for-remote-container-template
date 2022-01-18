@@ -1,5 +1,6 @@
 # dlang-for-remote-container-template
 [![CI](https://github.com/tom-tan/dlang-for-remote-container-template/actions/workflows/ci.yml/badge.svg)](https://github.com/tom-tan/dlang-for-remote-container-template/actions/workflows/ci.yml)
+[![license](https://badgen.net/github/license/tom-tan/dlang-for-remote-container-template)](https://github.com/tom-tan/dlang-for-remote-container-template/blob/master/LICENSE)
 
 # What is this?
 This is a template to develop [D](https://dlang.org/) applications with [Visual Studio Code](https://code.visualstudio.com/) with [remote container](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension.
@@ -11,7 +12,7 @@ This is a template to develop [D](https://dlang.org/) applications with [Visual 
 - Open the cloned repository with remote container extension of VSCode.
 - Have fun!
   - Remember the followings:
-    - Fix [LICENSE](LICENSE) file and a badge link in [README.md](README.md)
+    - Fix [LICENSE](LICENSE) file and badge links in [README.md](README.md)
     - Remove [build-container.yml](.github/workflows/build-container.yml) not to consume workflow run time in Github Actions
 
 ## What is provided in this template?
