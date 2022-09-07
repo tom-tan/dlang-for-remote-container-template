@@ -95,7 +95,7 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/${{ matrix.dc }}:${{ steps.get_release.outputs.latest }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.dc }}:latest
           build-args: |
-            VARIANT=ubuntu-20.04
+            VARIANT=ubuntu-22.04
             DC_NAME=${{ matrix.dc }}
             DC_VERSION=${{ steps.get_release.outputs.latest }}
       - name: Cache latest version info
