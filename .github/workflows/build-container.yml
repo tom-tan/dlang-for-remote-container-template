@@ -8,6 +8,11 @@ on:
       force_rebuild:
         required: true
         default: 'false'
+      dc:
+        required: false
+      version:
+        required: false
+      
 
 jobs:
   build:
@@ -58,20 +63,38 @@ jobs:
             cur=""
           fi
  
-          if [ "${{ github.event.inputs.force_rebuild }}" = "true" ]; then
-            need_update=true
+          if [ "$force_rebuild" = "true" ]; then
+            if [ -z "$specified_dc" -o "$specified_dc" = "${dc}" ]; then
+              if [ -n "$specified_dc" -a -z "$specified_ver" ]; then
+                echo "::error ::'dc' is specified but 'version' is not"
+                return 1
+              elif [ -z "$specified_dc" -a -n "$specified_ver" ]; then
+                echo "::error ::'dc' is not specified but 'version' is"
+                return 1
+              fi
+              need_update=true
+              target_ver="$specified_ver"
+            else
+              need_update=false
+              latest=""
+            fi
           elif [ -z "$latest" -o "$latest" = "$cur" ]; then
             need_update=false
             latest=""
           else
             need_update=true
+            target_ver="$latest"
           fi
           echo "::set-output name=need_update::$need_update"
           echo "::set-output name=latest::$latest"
+          echo "::set-output name=target_ver::$target_ver"
 
-          echo "need_update? '$need_update', current: '$cur', latest, '$latest'"
+          echo "need_update? '$need_update', current: '$cur', latest: '$latest', target: '$target_ver'"
         env:
           dc: ${{ matrix.dc }}
+          force_rebuild: ${{ github.event.inputs.force_rebuild }}
+          specified_dc: ${{ github.event.inputs.dc }}
+          specified_ver: ${{ github.event.inputs.version }}
       - name: Set up QEMU
         if: steps.get_release.outputs.need_update == 'true'
         uses: docker/setup-qemu-action@v1
@@ -94,14 +117,14 @@ jobs:
           platforms: ${{ matrix.arch }}
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.dc }}:${{ steps.get_release.outputs.latest }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.dc }}:${{ steps.get_release.outputs.target_ver }}
             ghcr.io/${{ github.repository_owner }}/${{ matrix.dc }}:latest
           build-args: |
             VARIANT=ubuntu-22.04
             DC_NAME=${{ matrix.dc }}
-            DC_VERSION=${{ steps.get_release.outputs.latest }}
+            DC_VERSION=${{ steps.get_release.outputs.target_ver }}
       - name: Cache latest version info
-        if: steps.get_release.outputs.need_update == 'true'
+        if: steps.get_release.outputs.need_update == 'true' && steps.get_release.outputs.target_ver == steps.get_release.outputs.latest
         run: |
           mkdir -p $GITHUB_WORKSPACE/dc-versions
           echo $latest > $GITHUB_WORKSPACE/dc-versions/$dc
