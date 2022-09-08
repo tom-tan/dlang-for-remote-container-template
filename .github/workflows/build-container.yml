@@ -40,7 +40,7 @@ jobs:
         with:
           path: ${{ github.workspace }}/dc-versions
           key: ${{ matrix.dc }}-${{ env.RANDOM_SUFFIX }}
-          restore_keys: |
+          restore-keys: |
             ${{ matrix.dc }}-
       - id: get_release
         run: |
