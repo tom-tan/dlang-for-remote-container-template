@@ -35,10 +35,13 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 1
+      - run: echo "RANDOM_SUFFIX=${RANDOM}" >> $GITHUB_ENV
       - uses: actions/cache@v2
         with:
           path: ${{ github.workspace }}/dc-versions
-          key: ${{ matrix.dc }}
+          key: ${{ matrix.dc }}-${{ env.RANDOM_SUFFIX }}
+          restore_keys: |
+            ${{ matrix.dc }}-
       - id: get_release
         run: |
           if [ "${dc}" = dmd ]; then
