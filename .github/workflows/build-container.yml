@@ -108,6 +108,14 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: generate latest image name
+        id: image_names
+        run: |
+          if [ "${{steps.get_release.outputs.target_ver}}" = "${{steps.get_release.outputs.latest}}" ]; then
+            echo "::set-output name=latest_image::ghcr.io/${{ github.repository_owner }}/${{ matrix.dc }}:latest"
+          else
+            echo "::set-output name=latest_image::"
+          fi
       - name: Build and push
         if: steps.get_release.outputs.need_update == 'true'
         uses: docker/build-push-action@v2
@@ -118,7 +126,7 @@ jobs:
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/${{ matrix.dc }}:${{ steps.get_release.outputs.target_ver }}
-            ghcr.io/${{ github.repository_owner }}/${{ matrix.dc }}:latest
+            ${{ steps.image_names.outputs.latest_image }}
           build-args: |
             VARIANT=ubuntu-22.04
             DC_NAME=${{ matrix.dc }}
