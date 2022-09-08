@@ -48,14 +48,11 @@ jobs:
           elif [ "${dc}" = gdc ]; then
             link=https://gdcproject.org/downloads/LATEST
           else
-            link=""
+            echo "::error ::unknown 'dc': ${dc}"
+            return 1
           fi
 
-          if [ -n "$link" ]; then
-            latest=$(curl --connect-timeout 10 -fsSL $link)
-          else
-            latest=""
-          fi
+          latest=$(curl --connect-timeout 10 -fsSL $link)
 
           if [ -e $GITHUB_WORKSPACE/dc-versions/$dc ]; then
             cur="$(cat $GITHUB_WORKSPACE/dc-versions/$dc)"
