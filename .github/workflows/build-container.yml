@@ -32,11 +32,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 1
       - run: echo "RANDOM_SUFFIX=${RANDOM}" >> $GITHUB_ENV
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: ${{ github.workspace }}/dc-versions
           key: ${{ matrix.dc }}-${{ env.RANDOM_SUFFIX }}
@@ -85,9 +85,9 @@ jobs:
             need_update=true
             target_ver="$latest"
           fi
-          echo "::set-output name=need_update::$need_update"
-          echo "::set-output name=latest::$latest"
-          echo "::set-output name=target_ver::$target_ver"
+          echo "need_update=$need_update" >> $GITHUB_OUTPUT
+          echo "latest=$latest" >> $GITHUB_OUTPUT
+          echo "target_ver=$target_ver" >> $GITHUB_OUTPUT
 
           echo "need_update? '$need_update', current: '$cur', latest: '$latest', target: '$target_ver'"
         env:
@@ -97,13 +97,13 @@ jobs:
           specified_ver: ${{ github.event.inputs.version }}
       - name: Set up QEMU
         if: steps.get_release.outputs.need_update == 'true'
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
         if: steps.get_release.outputs.need_update == 'true'
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
       - name: Login to GitHub Container Registry
         if: steps.get_release.outputs.need_update == 'true'
-        uses: docker/login-action@v1 
+        uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -112,13 +112,13 @@ jobs:
         id: image_names
         run: |
           if [ "${{steps.get_release.outputs.target_ver}}" = "${{steps.get_release.outputs.latest}}" ]; then
-            echo "::set-output name=latest_image::ghcr.io/${{ github.repository_owner }}/${{ matrix.dc }}:latest"
+            echo "latest_image=ghcr.io/${{ github.repository_owner }}/${{ matrix.dc }}:latest" >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=latest_image::"
+            echo "latest_image=" >> $GITHUB_OUTPUT
           fi
       - name: Build and push
         if: steps.get_release.outputs.need_update == 'true'
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           context: .
           file: .devcontainer/Dockerfile
