@@ -25,7 +25,7 @@ jobs:
           - dc: dmd
             arch: linux/amd64
           - dc: ldc
-            arch: linux/amd64 #,linux/arm64
+            arch: linux/amd64,linux/arm64
           - dc: gdc
             arch: linux/amd64
       fail-fast: false
