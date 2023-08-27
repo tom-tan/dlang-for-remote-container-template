@@ -1,16 +1,24 @@
 {
   "image": "ghcr.io/tom-tan/ldc:latest",
   "runArgs": ["--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined"],
-  "extensions": ["webfreak.dlang-bundle"],
-  "settings": {
-    "d.dmdPath": "dmd",
-    "d.stdlibPath": [
-      // for dmd
-      "/dlang/dc/src/druntime/import",
-      "/dlang/dc/src/phobos",
-      // for ldc and gdc
-      "/dlang/dc/import"
-    ]
-  },
+
+  // Configure tool-specific properties.
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+      "settings": {
+        "d.dmdPath": "dmd",
+        "d.stdlibPath": [
+          // for dmd
+          "/dlang/dc/src/druntime/import",
+          "/dlang/dc/src/phobos",
+          // for ldc and gdc
+          "/dlang/dc/import"
+        ]
+      },
+      // Add the IDs of extensions you want installed when the container is created.
+			"extensions": ["webfreak.dlang-bundle"]
+		}
+	},
   "remoteUser": "vscode"
 }
